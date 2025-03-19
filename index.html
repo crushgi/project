@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Coding Quiz</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background-color: #eef2f7;
+            padding: 20px;
+        }
+        .quiz-container {
+            width: 60%;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .question {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: hsl(190, 100%, 50%);
+            color: white;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .options button:hover {
+            background: #b1c7de;
+        }
+        .options button.correct {
+            background: #aee9bc !important;
+        }
+        .options button.wrong {
+            background: #d7b2b5 !important;
+        }
+        .hidden {
+            display: none;
+        }
+        button.next, button.restart {
+            padding: 12px 20px;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        button.next:hover, button.restart:hover {
+            background: #218838;
+        }
+        #result {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>Technical Coding Quiz</h2>
+        <div id="quiz">
+            <p class="question" id="question">Loading...</p>
+            <div class="options" id="options"></div>
+            <button class="next hidden" onclick="nextQuestion()">Next</button>
+        </div>
+        <p id="result" class="hidden"></p>
+        <button class="restart hidden" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "Hyperlinks and Text Markup Language", "Home Tool Markup Language", "Hyper Transfer Markup Language"], answer: "Hyper Text Markup Language" },
+            { question: "Which programming language is known as the 'mother of all languages'?", options: ["C", "Assembly", "COBOL", "Fortran"], answer: "Fortran" },
+            { question: "What is the time complexity of binary search?", options: ["O(n)", "O(log n)", "O(n log n)", "O(1)"], answer: "O(log n)" },
+            { question: "Which data structure follows FIFO (First In, First Out)?", options: ["Stack", "Queue", "Linked List", "Heap"], answer: "Queue" },
+            { question: "Which sorting algorithm has the worst-case time complexity of O(n²)?", options: ["Merge Sort", "Quick Sort", "Bubble Sort", "Heap Sort"], answer: "Bubble Sort" },
+            { question: "Which keyword is used to declare a constant in JavaScript?", options: ["var", "let", "const", "define"], answer: "const" },
+            { question: "What does CSS stand for?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style System", "Colorful Style Sheets"], answer: "Cascading Style Sheets" },
+            { question: "Which symbol is used for comments in Python?", options: ["//", "/* */", "#", "--"], answer: "#" },
+            { question: "Which of the following is a dynamically typed language?", options: ["Java", "C++", "Python", "C"], answer: "Python" },
+            { question: "Which database language is used to manage databases?", options: ["Python", "SQL", "C++", "NoSQL"], answer: "SQL" },
+            { question: "Which of the following is not an object-oriented programming language?", options: ["Java", "C++", "Python", "C"], answer: "C" },
+            { question: "What does API stand for?", options: ["Application Programming Interface", "Automated Processing Interface", "Application Process Integration", "Advanced Programming Instruction"], answer: "Application Programming Interface" },
+            { question: "Which of these is NOT a JavaScript framework?", options: ["React", "Angular", "Django", "Vue"], answer: "Django" },
+            { question: "What is the output of `console.log(typeof [])` in JavaScript?", options: ["Object", "Array", "List", "Undefined"], answer: "Object" },
+            { question: "Which of these is used for responsive web design?", options: ["Bootstrap", "Django", "Laravel", "Flask"], answer: "Bootstrap" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const questionEl = document.getElementById("question");
+            const optionsEl = document.getElementById("options");
+            const nextBtn = document.querySelector(".next");
+
+            optionsEl.innerHTML = "";
+            nextBtn.classList.add("hidden");
+
+            const q = questions[currentQuestionIndex];
+            questionEl.textContent = q.question;
+
+            q.options.forEach(option => {
+                const btn = document.createElement("button");
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(btn, option);
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(button, selected) {
+            const correctAnswer = questions[currentQuestionIndex].answer;
+            const nextBtn = document.querySelector(".next");
+
+            document.querySelectorAll(".options button").forEach(btn => btn.disabled = true);
+            if (selected === correctAnswer) {
+                button.classList.add("correct");
+                score++;
+            } else {
+                button.classList.add("wrong");
+                document.querySelectorAll(".options button").forEach(btn => {
+                    if (btn.textContent === correctAnswer) btn.classList.add("correct");
+                });
+            }
+
+            nextBtn.classList.remove("hidden");
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                document.getElementById("quiz").classList.add("hidden");
+                document.getElementById("result").textContent = `Quiz Over! Your Score: ${score}/${questions.length}`;
+                document.getElementById("result").classList.remove("hidden");
+                document.querySelector(".restart").classList.remove("hidden");
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById("quiz").classList.remove("hidden");
+            document.getElementById("result").classList.add("hidden");
+            document.querySelector(".restart").classList.add("hidden");
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
